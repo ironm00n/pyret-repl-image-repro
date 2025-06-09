@@ -11,6 +11,7 @@ import runtime-lib as RT
 import load-lib as LL
 
 include js-file("../proj-dir")
+include js-file("print-raw")
 
 provide:
   run,
@@ -43,13 +44,15 @@ fun load-syntax(path :: String):
 end
 
 
-fun run(ast):
+fun run(ast) block:
   i = repl.make-definitions-locator(lam(): "" end, CS.standard-globals).{
     method get-module(self):
       CL.pyret-ast(ast)
     end
   }
   result = repl.restart-interactions(i, CS.default-compile-options.{checks-format: "json"})
+  # print-raw(result.v)
+  print-result(result.v)
   if LL.is-success-result(result.v):
     LL.render-check-results(result.v).message
   else:
